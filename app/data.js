@@ -55,7 +55,7 @@ export const getPinnedRepos = unstable_cache(
     console.log("Fetching pinned repos for", username);
     console.time("getPinnedRepos");
     const res = await fetch(
-      "https://api.github.com//users/" + username + "/repos",
+      "https://api.github.com/users/" + username + "/repos",
       {
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.GH_TOKEN}` },
@@ -85,13 +85,16 @@ export const getUserOrganizations = unstable_cache(
   async (username) => {
     console.log("Fetching organizations for", username);
     console.time("getUserOrganizations");
-    const res = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.GH_TOKEN}` },
-      body: JSON.stringify({
-        query: `{user(login: "${username}") {organizations(first: 6) {nodes {name,websiteUrl,url,avatarUrl,description}}}}`,
-      }),
-    });
+    const res = await fetch(
+      "https://api.github.com/users/" + username + "/company",
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${process.env.GH_TOKEN}` },
+        body: JSON.stringify({
+          query: `{user(login: "${username}") {organizations(first: 6) {nodes {name,websiteUrl,url,avatarUrl,description}}}}`,
+        }),
+      }
+    );
     console.timeEnd("getUserOrganizations");
     const orgs = await res.json();
 
